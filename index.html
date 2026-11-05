@@ -29,31 +29,52 @@ html,body{height:100%;background:#0b0b0b;color:#fff;font-family:var(--font);over
 .meta{position:fixed;right:34px;top:calc(30px + env(safe-area-inset-top));font-size:11px;letter-spacing:.16em;color:rgba(255,255,255,.55);text-align:right;line-height:1.7}
 .tagline{position:fixed;left:34px;bottom:calc(30px + env(safe-area-inset-bottom));font-weight:300;font-size:21px;line-height:1.28;color:rgba(255,255,255,.92)}
 .tagline b{display:block;color:var(--orange);font-weight:400;font-size:12px;letter-spacing:.2em;margin-bottom:10px}
+.try{position:fixed;left:34px;bottom:calc(178px + env(safe-area-inset-bottom));width:min(380px,32vw);background:rgba(10,10,10,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:14px 16px 12px;cursor:pointer}
+.try-h{display:flex;justify-content:space-between;font-size:10.5px;letter-spacing:.18em;color:var(--orange);margin-bottom:8px}
+.try-h span{color:rgba(255,255,255,.45)}
+.try-body{display:grid;grid-template-columns:132px 1fr;gap:14px;align-items:center}
+.try-svg svg{width:132px;height:114px;display:block}
+.try-en{font-size:22px;font-weight:600;letter-spacing:.02em}
+.try-ko{font-size:15px;color:rgba(255,255,255,.75);margin-top:1px}
+.try-how{font-size:12.5px;line-height:1.5;color:rgba(255,255,255,.6);margin-top:8px}
+.try-shape{display:inline-block;font-size:10.5px;letter-spacing:.06em;color:var(--orange);border:1px solid rgba(255,90,31,.5);border-radius:999px;padding:1px 8px;margin-top:8px}
+.try.ok{border-color:var(--hud);box-shadow:0 0 0 1px var(--hud),0 0 30px rgba(92,255,157,.25)}
+.try-ok{display:none;color:var(--hud);font-size:12px;letter-spacing:.14em;margin-top:6px}.try.ok .try-ok{display:block}
+.try-dots{display:flex;gap:5px;justify-content:center;margin-top:8px}.try-dots i{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25)}.try-dots i.on{background:var(--orange)}
 .credit{position:fixed;left:34px;bottom:calc(8px + env(safe-area-inset-bottom));font-size:9.5px;letter-spacing:.06em;color:rgba(255,255,255,.3)}
-.glasses{position:fixed;right:30px;bottom:calc(30px + env(safe-area-inset-bottom));width:min(440px,37vw);background:rgba(8,8,8,.6);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.16);border-radius:22px;padding:18px 22px 20px}
-.g-head{display:flex;justify-content:space-between;align-items:center;font-size:10.5px;letter-spacing:.2em;color:rgba(255,255,255,.55);margin-bottom:14px}
-.g-head .t{display:flex;align-items:center;gap:9px;color:#fff}
-.lens{width:20px;height:12px;border:1.2px solid #fff;border-radius:3px;position:relative}
-.lens::after{content:"";position:absolute;right:-5px;top:3px;width:4px;height:4px;background:#fff;border-radius:1px}
+/* 안경 렌즈: 테 + 유리 + 렌즈 위에 떠 있는 초록 글자(도광판 HUD) */
+:root{--hud:#5CFF9D;--hud-dim:rgba(92,255,157,.55);--hud-glow:0 0 6px rgba(92,255,157,.55),0 0 18px rgba(92,255,157,.18)}
+.glasses{position:fixed;right:44px;bottom:calc(28px + env(safe-area-inset-bottom));width:min(470px,39vw);cursor:pointer}
+.lensframe{position:relative;border:8px solid #121212;border-radius:22% 26% 34% 30% / 26% 26% 44% 44%;background:#0a0a0a;box-shadow:0 20px 60px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.07),0 0 0 1px rgba(255,255,255,.06)}
+.lensglass{position:relative;border-radius:20% 24% 32% 28% / 24% 24% 42% 42%;padding:26px 30px 36px;min-height:240px;overflow:hidden;
+  background:linear-gradient(155deg,rgba(255,255,255,.13),rgba(255,255,255,0) 32%),radial-gradient(120% 90% at 50% 120%,rgba(30,60,40,.28),rgba(0,0,0,0)),rgba(8,14,10,.30);
+  backdrop-filter:blur(2.5px) brightness(.72) saturate(.7);-webkit-backdrop-filter:blur(2.5px) brightness(.72) saturate(.7)}
+.lensglass::before{content:"";position:absolute;inset:14px 18px auto 18px;height:42%;border:1px solid rgba(92,255,157,.10);border-radius:14px;pointer-events:none}
+.lensglass::after{content:"";position:absolute;left:-30%;top:-60%;width:60%;height:200%;transform:rotate(24deg);background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.07),rgba(255,255,255,0));pointer-events:none}
+.temple{position:absolute;right:-30px;top:22%;width:30px;height:16px;background:#121212;border-radius:3px 6px 6px 3px}
+.nub{position:absolute;right:-8px;top:30%;width:12px;height:32px;background:#E9E6DF;border-radius:6px;box-shadow:0 0 0 1px rgba(0,0,0,.4)}
+.g-head{display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:.2em;color:var(--hud-dim);margin-bottom:12px;text-shadow:var(--hud-glow)}
+.g-head .t{display:flex;align-items:center;gap:8px;color:var(--hud)}
+.lens{width:7px;height:7px;border-radius:50%;background:var(--hud);box-shadow:var(--hud-glow)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;min-height:30px;margin-bottom:12px}
-.chip{font-size:13px;padding:3px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.55);animation:pop .35s cubic-bezier(.2,.9,.3,1.3);display:flex;gap:6px;align-items:baseline}
-.chip small{font-size:9.5px;letter-spacing:.08em;color:rgba(255,255,255,.55)}
-.chip.now{background:var(--orange);border-color:var(--orange)}.chip.now small{color:rgba(255,255,255,.85)}
-.chip.nms{border-color:var(--orange);color:var(--orange)}
+.chip{font-size:13px;padding:2px 9px;border-radius:6px;border:1px solid var(--hud-dim);color:var(--hud);text-shadow:var(--hud-glow);animation:pop .35s cubic-bezier(.2,.9,.3,1.3);display:flex;gap:6px;align-items:baseline}
+.chip small{font-size:9px;letter-spacing:.08em;color:var(--hud-dim)}
+.chip.now{background:rgba(92,255,157,.18);border-color:var(--hud)}
+.chip.nms{border-style:dashed;border-color:var(--hud);color:var(--hud)}
 .chip.unsure{border-style:dashed;color:rgba(255,255,255,.5)}
 @keyframes pop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
-.say{font-size:23px;font-weight:500;line-height:1.38;min-height:64px}
-.say.idle{font-weight:300;color:rgba(255,255,255,.42);font-size:17px}
-.en{font-size:11px;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-top:6px;min-height:14px}
-.sent{font-size:11px;letter-spacing:.14em;color:rgba(255,255,255,.55);margin-top:8px;min-height:16px;display:flex;align-items:center;gap:8px}
-.sent.ok{color:#fff}
-.bars{display:inline-flex;gap:2px;align-items:center;height:12px}.bars i{width:2px;height:2px;background:var(--orange)}
+.say{font-size:24px;font-weight:500;line-height:1.36;min-height:64px;color:var(--hud);text-shadow:var(--hud-glow);letter-spacing:-.005em}
+.say.idle{font-weight:400;color:var(--hud-dim);font-size:16px}
+.en{font-size:10.5px;letter-spacing:.12em;color:var(--hud-dim);margin-top:6px;min-height:14px}
+.sent{font-size:10.5px;letter-spacing:.14em;color:var(--hud-dim);margin-top:8px;min-height:16px;display:flex;align-items:center;gap:8px}
+.sent.ok{color:var(--hud);text-shadow:var(--hud-glow)}
+.bars{display:inline-flex;gap:2px;align-items:center;height:12px}.bars i{width:2px;height:2px;background:var(--hud)}
 .bars.on i{animation:wv .8s ease-in-out infinite}.bars.on i:nth-child(2){animation-delay:.12s}.bars.on i:nth-child(3){animation-delay:.24s}.bars.on i:nth-child(4){animation-delay:.36s}
 @keyframes wv{50%{height:12px}}
-.reply{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12);display:none}
+.reply{margin-top:12px;padding-top:10px;border-top:1px dashed rgba(92,255,157,.3);display:none}
 .reply.show{display:block;animation:pop .35s ease-out}
-.reply .who{font-size:10.5px;letter-spacing:.2em;color:rgba(255,255,255,.5);margin-bottom:5px}
-.reply .txt{font-size:19px;line-height:1.4}
+.reply .who{font-size:10px;letter-spacing:.2em;color:var(--hud-dim);margin-bottom:4px}
+.reply .txt{font-size:19px;line-height:1.4;color:var(--hud);text-shadow:var(--hud-glow)}
 .start{position:fixed;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.55);z-index:6}
 .start button{background:var(--orange);color:#fff;border:none;border-radius:999px;padding:16px 34px;font:500 18px var(--font);letter-spacing:.02em}
 .start p{margin-top:14px;font-size:12px;color:rgba(255,255,255,.6);text-align:center;line-height:1.7}
@@ -78,15 +99,25 @@ html,body{height:100%;background:#0b0b0b;color:#fff;font-family:var(--font);over
 <canvas id="out"></canvas>
 <div class="brand"><span class="name">VIS-À-VIS</span><span class="live"><i id="dot"></i><span id="camTag">LIVE · CLIP CAMERA 180°</span></span></div>
 <div class="meta"><span id="status">LOADING</span><br><span id="fps">—</span></div>
+<section class="try" id="try">
+  <div class="try-h">TRY THIS SIGN · 따라 해 보세요<span id="tryIdx"></span></div>
+  <div class="try-body"><div class="try-svg" id="trySvg"></div>
+    <div><div class="try-en" id="tryEn"></div><div class="try-ko" id="tryKo"></div><div class="try-how" id="tryHow"></div><div class="try-shape" id="tryShape"></div><div class="try-ok">✓ 인식됐어요</div></div></div>
+  <div class="try-dots" id="tryDots"></div>
+</section>
 <div class="tagline"><b>DIALOGUE LAYER</b>Connect Through Signing<br>Sense the Signals That Matter<br>Live Fully in Your Own Language</div>
 <div class="credit">Sign model: GestureSign (MIT) · Data: Kaggle asl-signs (CC BY 4.0) · Landmarks: MediaPipe Holistic</div>
 <section class="glasses" id="glasses">
-  <div class="g-head"><span class="t"><i class="lens"></i>EYEWEAR VIEW</span><span id="gState">STANDBY</span></div>
-  <div class="chips" id="chips"></div>
-  <div class="say idle" id="say">수어를 해 보세요 · Sign to the camera</div>
-  <div class="en" id="en"></div>
-  <div class="sent" id="sent"></div>
-  <div class="reply" id="reply"><div class="who">상대 · PARTNER</div><div class="txt" id="replyTxt"></div></div>
+  <div class="temple"></div>
+  <div class="lensframe"><div class="lensglass">
+    <div class="g-head"><span class="t"><i class="lens"></i>VIS-À-VIS VIEW</span><span id="gState">STANDBY</span></div>
+    <div class="chips" id="chips"></div>
+    <div class="say idle" id="say">← 왼쪽 수어를 따라 해 보세요</div>
+    <div class="en" id="en"></div>
+    <div class="sent" id="sent"></div>
+    <div class="reply" id="reply"><div class="who">상대 · PARTNER</div><div class="txt" id="replyTxt"></div></div>
+  </div></div>
+  <div class="nub"></div>
 </section>
 <div class="recbar" id="recbar"></div>
 <div class="start" id="start"><div style="text-align:center"><button id="go">시작하기</button><p>카메라 권한을 허용해 주세요<br>처음 실행 시 모델(약 20MB)을 내려받아요</p></div></div>
@@ -312,7 +343,7 @@ async function classify(segment){
 }
 function addWord(ko,en,p,nms){
   if(!words.length){ $("#reply").classList.remove("show"); $("#say").className="say idle"; $("#say").innerHTML=""; $("#sent").className="sent"; $("#sent").textContent=""; }
-  words.push({ko,en,nms}); pops.push({w:ko,t:performance.now()});
+  words.push({ko,en,nms}); pops.push({w:ko,t:performance.now()}); tryHit(en);
   $("#chips").innerHTML=words.map((w,i)=>`<span class="chip${i===words.length-1?" now":""}">${w.ko}<small>${w.en==="KSL"?"KSL":w.en.toUpperCase()}</small></span>`).join("");
   $("#en").textContent=`${en==="KSL"?"한국수어":"ASL"} · ${(p*100|0)}%`; $("#gState").textContent="READING SIGNS";
   clearTimeout(composeTimer); composeTimer=setTimeout(compose,2600);
@@ -340,15 +371,18 @@ function speak(text,done){ if(!$("#tts").checked||!("speechSynthesis" in window)
 /* ====================== 11-1. 광각(어안) 효과 — WebGL ======================
    일반 카메라 영상을 180° 어안처럼 보이게: 화면 반지름 r → 원본 반지름 tan(r·A)/tan(A)
    (가운데는 크게, 가장자리는 눌려 보이는 배럴 왜곡). 랜드마크도 같은 식의 역함수로 옮긴다. */
-const FISH_A=1.18;
+const FISH_PHI=1.2, FISH_CIRC=.96, HALF_PI=Math.PI/2; // 원본을 대각 ±69°로 보고, 화면에서는 원 가장자리가 90°(=180° 시야)
 const fish=document.createElement("canvas"); let gl=null,glTex=null,glRes=null;
 function initGL(){ gl=fish.getContext("webgl",{premultipliedAlpha:false,preserveDrawingBuffer:true}); if(!gl) return false;
   const vs=`attribute vec2 p;varying vec2 uv;void main(){uv=p*.5+.5;gl_Position=vec4(p,0.,1.);}`;
-  const fs=`precision mediump float;uniform sampler2D t;uniform vec2 res;uniform float A;varying vec2 uv;
-    void main(){vec2 d=(uv-.5)*res;float R=.5*length(res);float r=length(d)/R;vec2 q=d;
-      if(r>1e-4){q=d*(tan(r*A)/tan(A))/r;} vec2 s=q/res+.5;
-      if(s.x<0.||s.x>1.||s.y<0.||s.y>1.){gl_FragColor=vec4(0.,0.,0.,1.);}else{gl_FragColor=texture2D(t,s);}
-      float edge=smoothstep(.86,1.02,r);gl_FragColor.rgb*=1.-edge*.85;}`;
+  const fs=`precision highp float;uniform sampler2D t;uniform vec2 res;uniform float A;varying vec2 uv;
+    void main(){vec2 d=(uv-.5)*res;float Rc=.5*min(res.x,res.y)*${FISH_CIRC.toFixed(3)};float r=length(d)/Rc;
+      if(r>=1.){gl_FragColor=vec4(0.,0.,0.,1.);return;}
+      float th=r*1.5707963;vec2 dir=r>1e-5?d/length(d):vec2(0.);
+      float rs=tan(min(th,1.5))/tan(A)*.5*length(res);vec2 s=dir*rs/res+.5;
+      vec2 c=clamp(s,0.,1.);float out1=length(s-c)*3.;
+      vec3 col=texture2D(t,c).rgb*(1.-clamp(out1*1.6,0.,.88));
+      col*=1.-smoothstep(.88,1.,r)*.9;gl_FragColor=vec4(col,1.);}`;
   const sh=(type,src)=>{ const o=gl.createShader(type); gl.shaderSource(o,src); gl.compileShader(o); return o; };
   const pr=gl.createProgram(); gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs)); gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs)); gl.linkProgram(pr);
   if(!gl.getProgramParameter(pr,gl.LINK_STATUS)) return false; gl.useProgram(pr);
@@ -357,17 +391,51 @@ function initGL(){ gl=fish.getContext("webgl",{premultipliedAlpha:false,preserve
   glTex=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,glTex);
   for(const [k,v] of [[gl.TEXTURE_MIN_FILTER,gl.LINEAR],[gl.TEXTURE_MAG_FILTER,gl.LINEAR],[gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE],[gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D,k,v);
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
-  glRes=gl.getUniformLocation(pr,"res"); gl.uniform1f(gl.getUniformLocation(pr,"A"),FISH_A); return true; }
+  glRes=gl.getUniformLocation(pr,"res"); gl.uniform1f(gl.getUniformLocation(pr,"A"),FISH_PHI); return true; }
 let glOK=null;
 function fishImage(srcCanvas){ if(glOK===null) glOK=initGL(); if(!glOK) return srcCanvas;
   const W=srcCanvas.width,H=srcCanvas.height; if(fish.width!==W||fish.height!==H){ fish.width=W; fish.height=H; }
   gl.viewport(0,0,W,H); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,srcCanvas); gl.uniform2f(glRes,W,H); gl.drawArrays(gl.TRIANGLE_STRIP,0,4); return fish; }
 /* 원본 정규좌표(0~1) → 어안 화면 정규좌표 */
-function fishPoint(x,y,W,H){ const dx=(x-.5)*W,dy=(y-.5)*H,R=.5*Math.hypot(W,H),rs=Math.hypot(dx,dy)/R; if(rs<1e-6) return [x,y];
-  const r=Math.atan(rs*Math.tan(FISH_A))/FISH_A, k=r/rs; return [.5+dx*k/W,.5+dy*k/H]; }
+function fishPoint(x,y,W,H){ const dx=(x-.5)*W,dy=(y-.5)*H,len=Math.hypot(dx,dy); if(len<1e-6) return [.5,.5];
+  const rs=len/(.5*Math.hypot(W,H)), th=Math.atan(rs*Math.tan(FISH_PHI)), r=th/HALF_PI, Rc=.5*Math.min(W,H)*FISH_CIRC;
+  return [.5+dx/len*r*Rc/W, .5+dy/len*r*Rc/H]; }
 const viewParam=new URLSearchParams(location.search).get("view"); if(viewParam==="normal"||viewParam==="wide") document.querySelector("#view").value=viewParam;
 function applyView(){ const w=$("#view").value==="wide"; $("#camTag").textContent=w?"LIVE · CLIP CAMERA 180°":"LIVE · CAMERA"; }
 $("#view").onchange=applyView; applyView();
+
+/* ====================== 11-2. 예시 수어 카드 (ASL) ======================
+   머리·어깨 실루엣 위에서 손(주황)이 실제 동작 경로를 따라 움직인다. */
+const TRY=[
+  {key:"hello",en:"HELLO",ko:"안녕하세요",how:"편 손을 이마 옆에 붙였다가, 경례하듯 바깥으로 쭉 뻗어요.",shape:"편 손 (B)",hand:"open",path:"M86 22 L118 28",dur:1.4},
+  {key:"thank you",en:"THANK YOU",ko:"감사합니다",how:"편 손 손끝을 턱에 댔다가, 앞쪽 아래로 내려요.",shape:"편 손 (B)",hand:"open",path:"M72 54 Q76 72 96 84",dur:1.4},
+  {key:"yes",en:"YES",ko:"네",how:"주먹을 쥐고, 고개를 끄덕이듯 손목을 위아래로 두 번.",shape:"주먹 (S)",hand:"fist",path:"M98 84 L98 68 L98 84 L98 68",dur:1.2},
+  {key:"no",en:"NO",ko:"아니요",how:"검지·중지를 엄지에 '탁' 붙였다 떼기를 두 번.",shape:"검지·중지·엄지",hand:"pinch",path:"M98 70 L102 66 L98 70 L102 66",dur:1.0},
+  {key:"please",en:"PLEASE",ko:"부탁해요",how:"편 손바닥을 가슴에 대고 동그랗게 원을 그려요.",shape:"편 손바닥",hand:"open",path:"M60 92 A10 10 0 1 0 80 92 A10 10 0 1 0 60 92",dur:1.6},
+  {key:"drink",en:"DRINK",ko:"마시다",how:"컵을 쥐듯 C 모양 손을 입으로 가져가 기울여요.",shape:"C 모양",hand:"c",path:"M90 80 Q86 60 74 48",dur:1.4},
+  {key:"happy",en:"HAPPY",ko:"행복하다",how:"편 손으로 가슴을 위로 두 번 쓸어 올려요.",shape:"편 손",hand:"open",path:"M70 104 L70 84 L70 104 L70 84",dur:1.4},
+  {key:"water",en:"WATER",ko:"물",how:"검지·중지·약지를 편 W 손으로 턱을 두 번 톡톡.",shape:"W 손",hand:"w",path:"M80 60 L76 54 L80 60 L76 54",dur:1.0},
+];
+let tryIdx=0, tryTimer=null, tryPausedUntil=0;
+function handSvg(kind){ const o='fill="#FF5A1F" stroke="#fff" stroke-width="1"';
+  if(kind==="fist") return `<circle r="7" ${o}/>`;
+  if(kind==="pinch") return `<g><circle r="5.5" ${o}/><rect x="-1.6" y="-15" width="3.2" height="10" rx="1.6" ${o}/></g>`;
+  if(kind==="c") return `<path d="M5 -8 A9 9 0 1 0 5 8" fill="none" stroke="#FF5A1F" stroke-width="5" stroke-linecap="round"/>`;
+  if(kind==="w") return `<g>${[-5,0,5].map(x=>`<rect x="${x-1.6}" y="-14" width="3.2" height="12" rx="1.6" ${o}/>`).join("")}<circle r="5" cy="1" ${o}/></g>`;
+  return `<rect x="-5.5" y="-10" width="11" height="20" rx="5" ${o}/>`; }
+function trySvg(t){ return `<svg viewBox="0 0 140 120" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="70" cy="34" r="20" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.4"/>
+  <path d="M60 50 Q70 56 80 50" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1"/>
+  <path d="M14 120 Q24 72 70 66 Q116 72 126 120" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.4"/>
+  <path d="${t.path}" fill="none" stroke="rgba(255,90,31,.6)" stroke-width="1.2" stroke-dasharray="3 3"/>
+  <g>${handSvg(t.hand)}<animateMotion dur="${t.dur}s" repeatCount="indefinite" path="${t.path}" rotate="0"/></g></svg>`; }
+function showTry(i){ tryIdx=(i+TRY.length)%TRY.length; const t=TRY[tryIdx];
+  $("#trySvg").innerHTML=trySvg(t); $("#tryEn").textContent=t.en; $("#tryKo").textContent=t.ko; $("#tryHow").textContent=t.how; $("#tryShape").textContent="손 모양 · "+t.shape;
+  $("#tryIdx").textContent=`${tryIdx+1}/${TRY.length}`; $("#tryDots").innerHTML=TRY.map((_,k)=>`<i class="${k===tryIdx?"on":""}"></i>`).join(""); $("#try").classList.remove("ok"); }
+function tryHit(en){ if(!en||TRY[tryIdx].key!==en) return; $("#try").classList.add("ok"); tryPausedUntil=performance.now()+2200; setTimeout(()=>showTry(tryIdx+1),2000); }
+$("#try").onclick=()=>{ tryPausedUntil=performance.now()+15000; showTry(tryIdx+1); };
+setInterval(()=>{ if(performance.now()>tryPausedUntil && !words.length) showTry(tryIdx+1); },7000);
+showTry(0);
 
 /* ====================== 12. 화면 ====================== */
 function rr(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
@@ -408,7 +476,7 @@ function loop(now){
   const has=i=>Number.isFinite(frame[i*3]);
 
   // 180° 눈금
-  const cx=CW/2,cy=CH/2,R=CH*.40;
+  const cx=CW/2,cy=CH/2,R=wide?Math.min(CW,CH)*.5*FISH_CIRC*(Math.max(CW/W,CH/H)*Math.min(W,H)/Math.min(CW,CH))*.985:CH*.40;
   ctx.strokeStyle="rgba(255,255,255,.18)"; ctx.lineWidth=1*u; ctx.beginPath(); ctx.arc(cx,cy,R,-Math.PI/2,Math.PI/2); ctx.stroke();
   for(let d=-90;d<=90;d+=10){ const a=d*Math.PI/180,l=(d%30===0?14:7)*u; ctx.strokeStyle=d===0?ORANGE:"rgba(255,255,255,.4)"; ctx.beginPath(); ctx.moveTo(cx+Math.cos(a)*R,cy+Math.sin(a)*R); ctx.lineTo(cx+Math.cos(a)*(R+l),cy+Math.sin(a)*(R+l)); ctx.stroke(); }
   ctx.setLineDash([3*u,6*u]); ctx.strokeStyle="rgba(255,90,31,.55)"; ctx.beginPath(); ctx.moveTo(CW*.08,cy); ctx.lineTo(cx+R,cy); ctx.stroke(); ctx.setLineDash([]);
@@ -470,7 +538,7 @@ $("#refresh").onclick=listCams; $("#camSel").onchange=()=>startDevice($("#camSel
 document.addEventListener("keydown",e=>{ if(e.target.tagName==="INPUT") return; const k=e.key.toLowerCase();
   if(e.code==="Space"){ e.preventDefault(); clearTimeout(composeTimer); compose(); }
   if(k==="f") document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.();
-  if(k==="0"){ sIdx=0; sG=0; $("#reply").classList.remove("show"); words=[]; $("#chips").innerHTML=""; $("#say").className="say idle"; $("#say").textContent="수어를 해 보세요 · Sign to the camera"; $("#en").textContent=""; $("#sent").textContent=""; } });
+  if(k==="0"){ sIdx=0; sG=0; $("#reply").classList.remove("show"); words=[]; $("#chips").innerHTML=""; $("#say").className="say idle"; $("#say").textContent="← 왼쪽 수어를 따라 해 보세요"; $("#en").textContent=""; $("#sent").textContent=""; } });
 $("#go").onclick=async()=>{ $("#start").style.display="none"; if("speechSynthesis" in window) speechSynthesis.getVoices();
   try{ await startDevice(null); await listCams(); const ext=$("#camSel").value; if(ext&&video&&video.srcObject.getVideoTracks()[0].getSettings().deviceId!==ext) await startDevice(ext); }
   catch(e){ $("#status").textContent="CAMERA BLOCKED"; alert("카메라 권한이 필요해요: "+e.message); } };
