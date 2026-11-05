@@ -32,8 +32,16 @@ html,body{height:100%;background:#0b0b0b;color:#fff;font-family:var(--font);over
 .try{position:fixed;left:34px;bottom:calc(178px + env(safe-area-inset-bottom));width:min(380px,32vw);background:rgba(10,10,10,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:14px 16px 12px;cursor:pointer}
 .try-h{display:flex;justify-content:space-between;font-size:10.5px;letter-spacing:.18em;color:var(--orange);margin-bottom:8px}
 .try-h span{color:rgba(255,255,255,.45)}
-.try-body{display:grid;grid-template-columns:132px 1fr;gap:14px;align-items:center}
-.try-svg svg{width:132px;height:114px;display:block}
+.try{width:min(430px,34vw)}
+.try-body{display:grid;grid-template-columns:168px 1fr;gap:14px;align-items:center}
+.try-svg{width:168px;height:126px;border-radius:12px;overflow:hidden;background:#000;position:relative}
+.try-svg svg{width:168px;height:126px;display:block}
+.try-svg video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);display:block}
+.try-svg .vtag{position:absolute;left:6px;top:6px;font-size:9px;letter-spacing:.12em;background:rgba(0,0,0,.55);color:#fff;border-radius:4px;padding:2px 5px}
+.try-nms{font-size:11.5px;color:var(--hud);margin-top:6px}
+.try-btns{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.try-btns button,.try-btns a{font:500 11px var(--font);color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 10px;text-decoration:none}
+.try-btns .rec{background:var(--orange);border-color:var(--orange)}
 .try-en{font-size:22px;font-weight:600;letter-spacing:.02em}
 .try-ko{font-size:15px;color:rgba(255,255,255,.75);margin-top:1px}
 .try-how{font-size:12.5px;line-height:1.5;color:rgba(255,255,255,.6);margin-top:8px}
@@ -102,7 +110,8 @@ html,body{height:100%;background:#0b0b0b;color:#fff;font-family:var(--font);over
 <section class="try" id="try">
   <div class="try-h">TRY THIS SIGN · 따라 해 보세요<span id="tryIdx"></span></div>
   <div class="try-body"><div class="try-svg" id="trySvg"></div>
-    <div><div class="try-en" id="tryEn"></div><div class="try-ko" id="tryKo"></div><div class="try-how" id="tryHow"></div><div class="try-shape" id="tryShape"></div><div class="try-ok">✓ 인식됐어요</div></div></div>
+    <div><div class="try-en" id="tryEn"></div><div class="try-ko" id="tryKo"></div><div class="try-how" id="tryHow"></div><div class="try-shape" id="tryShape"></div><div class="try-nms" id="tryNms"></div><div class="try-ok">✓ 인식됐어요</div></div></div>
+  <div class="try-btns"><button class="rec" id="tryRec">● 예시 영상 녹화</button><a id="tryDict" target="_blank" rel="noopener">사전 영상 ↗</a><button id="trySave">파일로 저장</button><button id="tryDel">영상 지우기</button></div>
   <div class="try-dots" id="tryDots"></div>
 </section>
 <div class="tagline"><b>DIALOGUE LAYER</b>Connect Through Signing<br>Sense the Signals That Matter<br>Live Fully in Your Own Language</div>
@@ -407,14 +416,14 @@ $("#view").onchange=applyView; applyView();
 /* ====================== 11-2. 예시 수어 카드 (ASL) ======================
    머리·어깨 실루엣 위에서 손(주황)이 실제 동작 경로를 따라 움직인다. */
 const TRY=[
-  {key:"hello",en:"HELLO",ko:"안녕하세요",how:"편 손을 이마 옆에 붙였다가, 경례하듯 바깥으로 쭉 뻗어요.",shape:"편 손 (B)",hand:"open",path:"M86 22 L118 28",dur:1.4},
-  {key:"thank you",en:"THANK YOU",ko:"감사합니다",how:"편 손 손끝을 턱에 댔다가, 앞쪽 아래로 내려요.",shape:"편 손 (B)",hand:"open",path:"M72 54 Q76 72 96 84",dur:1.4},
-  {key:"yes",en:"YES",ko:"네",how:"주먹을 쥐고, 고개를 끄덕이듯 손목을 위아래로 두 번.",shape:"주먹 (S)",hand:"fist",path:"M98 84 L98 68 L98 84 L98 68",dur:1.2},
-  {key:"no",en:"NO",ko:"아니요",how:"검지·중지를 엄지에 '탁' 붙였다 떼기를 두 번.",shape:"검지·중지·엄지",hand:"pinch",path:"M98 70 L102 66 L98 70 L102 66",dur:1.0},
-  {key:"please",en:"PLEASE",ko:"부탁해요",how:"편 손바닥을 가슴에 대고 동그랗게 원을 그려요.",shape:"편 손바닥",hand:"open",path:"M60 92 A10 10 0 1 0 80 92 A10 10 0 1 0 60 92",dur:1.6},
-  {key:"drink",en:"DRINK",ko:"마시다",how:"컵을 쥐듯 C 모양 손을 입으로 가져가 기울여요.",shape:"C 모양",hand:"c",path:"M90 80 Q86 60 74 48",dur:1.4},
-  {key:"happy",en:"HAPPY",ko:"행복하다",how:"편 손으로 가슴을 위로 두 번 쓸어 올려요.",shape:"편 손",hand:"open",path:"M70 104 L70 84 L70 104 L70 84",dur:1.4},
-  {key:"water",en:"WATER",ko:"물",how:"검지·중지·약지를 편 W 손으로 턱을 두 번 톡톡.",shape:"W 손",hand:"w",path:"M80 60 L76 54 L80 60 L76 54",dur:1.0},
+  {key:"hello",nms:"표정 · 가볍게 미소",en:"HELLO",ko:"안녕하세요",how:"편 손을 이마 옆에 붙였다가, 경례하듯 바깥으로 쭉 뻗어요.",shape:"편 손 (B)",hand:"open",path:"M86 22 L118 28",dur:1.4},
+  {key:"thank you",nms:"표정 · 미소, 살짝 고개 숙임",en:"THANK YOU",ko:"감사합니다",how:"편 손 손끝을 턱에 댔다가, 앞쪽 아래로 내려요.",shape:"편 손 (B)",hand:"open",path:"M72 54 Q76 72 96 84",dur:1.4},
+  {key:"yes",nms:"비수지 · 고개도 같이 끄덕",en:"YES",ko:"네",how:"주먹을 쥐고, 고개를 끄덕이듯 손목을 위아래로 두 번.",shape:"주먹 (S)",hand:"fist",path:"M98 84 L98 68 L98 84 L98 68",dur:1.2},
+  {key:"no",nms:"비수지 · 고개를 살짝 저어요",en:"NO",ko:"아니요",how:"검지·중지를 엄지에 '탁' 붙였다 떼기를 두 번.",shape:"검지·중지·엄지",hand:"pinch",path:"M98 70 L102 66 L98 70 L102 66",dur:1.0},
+  {key:"please",nms:"표정 · 부드럽게, 눈썹 살짝 올림",en:"PLEASE",ko:"부탁해요",how:"편 손바닥을 가슴에 대고 동그랗게 원을 그려요.",shape:"편 손바닥",hand:"open",path:"M60 92 A10 10 0 1 0 80 92 A10 10 0 1 0 60 92",dur:1.6},
+  {key:"drink",nms:"표정 · 자연스럽게",en:"DRINK",ko:"마시다",how:"컵을 쥐듯 C 모양 손을 입으로 가져가 기울여요.",shape:"C 모양",hand:"c",path:"M90 80 Q86 60 74 48",dur:1.4},
+  {key:"happy",nms:"표정 · 활짝 웃기",en:"HAPPY",ko:"행복하다",how:"편 손으로 가슴을 위로 두 번 쓸어 올려요.",shape:"편 손",hand:"open",path:"M70 104 L70 84 L70 104 L70 84",dur:1.4},
+  {key:"water",nms:"표정 · 자연스럽게",en:"WATER",ko:"물",how:"검지·중지·약지를 편 W 손으로 턱을 두 번 톡톡.",shape:"W 손",hand:"w",path:"M80 60 L76 54 L80 60 L76 54",dur:1.0},
 ];
 let tryIdx=0, tryTimer=null, tryPausedUntil=0;
 function handSvg(kind){ const o='fill="#FF5A1F" stroke="#fff" stroke-width="1"';
@@ -429,11 +438,38 @@ function trySvg(t){ return `<svg viewBox="0 0 140 120" xmlns="http://www.w3.org/
   <path d="M14 120 Q24 72 70 66 Q116 72 126 120" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.4"/>
   <path d="${t.path}" fill="none" stroke="rgba(255,90,31,.6)" stroke-width="1.2" stroke-dasharray="3 3"/>
   <g>${handSvg(t.hand)}<animateMotion dur="${t.dur}s" repeatCount="indefinite" path="${t.path}" rotate="0"/></g></svg>`; }
-function showTry(i){ tryIdx=(i+TRY.length)%TRY.length; const t=TRY[tryIdx];
-  $("#trySvg").innerHTML=trySvg(t); $("#tryEn").textContent=t.en; $("#tryKo").textContent=t.ko; $("#tryHow").textContent=t.how; $("#tryShape").textContent="손 모양 · "+t.shape;
+/* 예시 영상: ① 이 기기에서 녹화한 영상(IndexedDB) ② 저장소 signs/ 폴더의 파일 ③ 없으면 동작 그림 */
+const IDB={db:null,async open(){ if(this.db) return this.db; this.db=await new Promise((res,rej)=>{ const r=indexedDB.open("vv-sign-videos",1); r.onupgradeneeded=()=>r.result.createObjectStore("v"); r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); return this.db; },
+  async get(k){ try{ const db=await this.open(); return await new Promise(res=>{ const q=db.transaction("v").objectStore("v").get(k); q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null); }); }catch(e){ return null; } },
+  async set(k,v){ const db=await this.open(); return new Promise(res=>{ const tx=db.transaction("v","readwrite"); tx.objectStore("v").put(v,k); tx.oncomplete=()=>res(); tx.onerror=()=>res(); }); },
+  async del(k){ try{ const db=await this.open(); return new Promise(res=>{ const tx=db.transaction("v","readwrite"); tx.objectStore("v").delete(k); tx.oncomplete=()=>res(); }); }catch(e){} }};
+const slug=k=>k.replace(/[^a-z0-9]+/gi,"-").toLowerCase();
+const repoCache={};
+async function repoVideo(k){ if(k in repoCache) return repoCache[k]; for(const ext of ["mp4","webm","mov"]){ try{ const u=`signs/${slug(k)}.${ext}`; const r=await fetch(u,{method:"HEAD"}); if(r.ok&&!(r.headers.get("content-type")||"").includes("html")) return repoCache[k]=u; }catch(e){} } return repoCache[k]=null; }
+let tryURL=null, tryBlob=null;
+async function tryMedia(t,token){ const blob=await IDB.get(t.key); if(token!==tryToken) return;
+  if(tryURL){ URL.revokeObjectURL(tryURL); tryURL=null; } tryBlob=blob||null;
+  let src=null,tag=""; if(blob){ src=tryURL=URL.createObjectURL(blob); tag="MY VIDEO"; } else { src=await repoVideo(t.key); tag=src?"VIDEO":""; } if(token!==tryToken) return;
+  if(src) $("#trySvg").innerHTML=`<video src="${src}" muted loop playsinline autoplay></video><span class="vtag">${tag}</span>`; }
+let tryToken=0;
+function showTry(i){ tryIdx=(i+TRY.length)%TRY.length; const t=TRY[tryIdx]; const token=++tryToken;
+  $("#trySvg").innerHTML=trySvg(t); tryMedia(t,token); $("#tryNms").textContent=t.nms||""; $("#tryDict").href=`https://www.signingsavvy.com/search/${encodeURIComponent(t.key)}`; $("#tryEn").textContent=t.en; $("#tryKo").textContent=t.ko; $("#tryHow").textContent=t.how; $("#tryShape").textContent="손 모양 · "+t.shape;
   $("#tryIdx").textContent=`${tryIdx+1}/${TRY.length}`; $("#tryDots").innerHTML=TRY.map((_,k)=>`<i class="${k===tryIdx?"on":""}"></i>`).join(""); $("#try").classList.remove("ok"); }
 function tryHit(en){ if(!en||TRY[tryIdx].key!==en) return; $("#try").classList.add("ok"); tryPausedUntil=performance.now()+2200; setTimeout(()=>showTry(tryIdx+1),2000); }
-$("#try").onclick=()=>{ tryPausedUntil=performance.now()+15000; showTry(tryIdx+1); };
+$("#try").onclick=e=>{ if(e.target.closest(".try-btns")) return; tryPausedUntil=performance.now()+15000; showTry(tryIdx+1); };
+async function recordExample(){ const t=TRY[tryIdx];
+  if(!video||!video.srcObject||typeof MediaRecorder==="undefined"){ flashRec("카메라(USB/내장)가 켜져 있어야 녹화할 수 있어요"); return; }
+  tryPausedUntil=performance.now()+60000;
+  const mime=["video/mp4;codecs=avc1","video/mp4","video/webm;codecs=vp9","video/webm"].find(m=>MediaRecorder.isTypeSupported(m))||"";
+  for(const n of [3,2,1]){ flashRec(`${t.en} · ${n}`,true); await new Promise(r=>setTimeout(r,800)); }
+  const chunks=[]; const mr=new MediaRecorder(video.srcObject,mime?{mimeType:mime,videoBitsPerSecond:2500000}:undefined);
+  mr.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
+  mr.onstop=async()=>{ const blob=new Blob(chunks,{type:mr.mimeType||mime||"video/webm"}); await IDB.set(t.key,blob); flashRec(`'${t.ko}' 예시 영상 저장됨`); setTimeout(()=>$("#recbar").classList.remove("on"),1600); showTry(tryIdx); tryPausedUntil=performance.now()+12000; };
+  flashRec(`● 녹화 중 · ${t.en} (표정까지 같이!)`,true); mr.start(); setTimeout(()=>mr.state!=="inactive"&&mr.stop(),3500); }
+$("#tryRec").onclick=e=>{ e.stopPropagation(); recordExample(); };
+$("#tryDel").onclick=async e=>{ e.stopPropagation(); await IDB.del(TRY[tryIdx].key); showTry(tryIdx); };
+$("#trySave").onclick=e=>{ e.stopPropagation(); if(!tryBlob){ flashRec("이 기기에서 녹화한 영상이 없어요"); setTimeout(()=>$("#recbar").classList.remove("on"),1400); return; }
+  const ext=(tryBlob.type||"").includes("mp4")?"mp4":"webm"; const a=document.createElement("a"); a.href=URL.createObjectURL(tryBlob); a.download=`${slug(TRY[tryIdx].key)}.${ext}`; a.click(); };
 setInterval(()=>{ if(performance.now()>tryPausedUntil && !words.length) showTry(tryIdx+1); },7000);
 showTry(0);
 
