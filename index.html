@@ -76,7 +76,7 @@ html,body{height:100%;background:#0b0b0b;color:#fff;font-family:var(--font);over
 </head>
 <body>
 <canvas id="out"></canvas>
-<div class="brand"><span class="name">VIS-À-VIS</span><span class="live"><i id="dot"></i>LIVE · CLIP CAMERA 180°</span></div>
+<div class="brand"><span class="name">VIS-À-VIS</span><span class="live"><i id="dot"></i><span id="camTag">LIVE · CLIP CAMERA 180°</span></span></div>
 <div class="meta"><span id="status">LOADING</span><br><span id="fps">—</span></div>
 <div class="tagline"><b>DIALOGUE LAYER</b>Connect Through Signing<br>Sense the Signals That Matter<br>Live Fully in Your Own Language</div>
 <div class="credit">Sign model: GestureSign (MIT) · Data: Kaggle asl-signs (CC BY 4.0) · Landmarks: MediaPipe Holistic</div>
@@ -94,6 +94,9 @@ html,body{height:100%;background:#0b0b0b;color:#fff;font-family:var(--font);over
 <div class="ops" id="ops">
   <label>MODE</label>
   <select id="mode"><option value="live">실제 인식 — ASL 250단어 + 내 한국수어</option><option value="demo">시나리오 연출 — 카페 주문 (수어 동작마다 다음 단어)</option></select>
+  <label>VIEW</label>
+  <select id="view"><option value="wide">광각 효과 — 180° 클립 카메라 시뮬레이션</option><option value="normal">일반 카메라</option></select>
+  <div class="chk"><input type="checkbox" id="color"><span>컬러 영상</span></div>
   <label>CAMERA</label><select id="camSel"></select>
   <label>WI-FI CAMERA URL (선택)</label><input type="text" id="mjpeg" placeholder="http://192.168.x.x:81/stream">
   <div class="row"><button class="primary" id="connect">연결</button><button id="refresh">새로고침</button></div>
@@ -219,7 +222,8 @@ let sIdx=0,sG=0;
 const ORANGE="#FF5A1F", $=s=>document.querySelector(s);
 const out=$("#out"),ctx=out.getContext("2d"),work=document.createElement("canvas"),wctx=work.getContext("2d"),trail=document.createElement("canvas"),tctx=trail.getContext("2d");
 const grain=document.createElement("canvas"); grain.width=grain.height=256; { const g=grain.getContext("2d"),d=g.createImageData(256,256); for(let i=0;i<d.data.length;i+=4){ const v=Math.random()*255; d.data[i]=d.data[i+1]=d.data[i+2]=v; d.data[i+3]=255; } g.putImageData(d,0,0); }
-let meta=null,labels=null,shipped=null,ortSession=null,holistic=null;
+let meta=null,labels=null,shipped=null,ortSession=null,holistic=null,holisticFactory=null,holisticCfg=null,detectErrors=0;
+const HOLISTIC_CFGS=[{delegate:"CPU",blend:true},{delegate:"GPU",blend:false}];
 let video=null,img=null,ready=false,lastTs=-1,busy=false;
 let frame=emptyFrame(),blend=null,poses=0;
 const seg=new Segmenter(); let signing=false;
@@ -249,7 +253,9 @@ async function loadModels(){
   const V=await import("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.0/vision_bundle.mjs");
   const fs=await V.FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.2.0/wasm");
   const url="https://storage.googleapis.com/mediapipe-models/holistic_landmarker/holistic_landmarker/float16/1/holistic_landmarker.task";
-  for(const delegate of ["GPU","CPU"]){ try{ holistic=await V.HolisticLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:url,delegate},runningMode:"VIDEO",outputFaceBlendshapes:true}); break; }catch(e){ console.warn(e); } }
+  holisticFactory=async(cfg)=>V.HolisticLandmarker.createFromOptions(fs,{baseOptions:{modelAssetPath:url,delegate:cfg.delegate},runningMode:"VIDEO",outputFaceBlendshapes:cfg.blend});
+  // GPU 대리자는 얼굴 블렌드셰이프를 지원하지 않음 → CPU+표정 먼저, 실패 시 GPU(표정 없이)
+  for(const cfg of HOLISTIC_CFGS){ try{ holistic=await holisticFactory(cfg); holisticCfg=cfg; break; }catch(e){ console.warn("holistic",cfg,e); } }
   if(!holistic) throw new Error("holistic");
   $("#status").textContent=`ASL ${shipped.filter(Boolean).length} SIGNS · LIVE`;
 }
@@ -266,6 +272,8 @@ function startMjpeg(url){ stop(); img=new Image(); img.crossOrigin="anonymous"; 
   img.onerror=()=>{ready=false;setTimeout(()=>{ if(img) img.src=url+(url.includes("?")?"&":"?")+"t="+Date.now(); },2000);}; img.src=url; }
 
 /* ====================== 9. 트래킹 → 프레임 ====================== */
+async function swapHolistic(){ const i=HOLISTIC_CFGS.indexOf(holisticCfg); const next=HOLISTIC_CFGS[(i+1)%HOLISTIC_CFGS.length];
+  try{ const h=await holisticFactory(next); const old=holistic; holistic=h; holisticCfg=next; detectErrors=0; old?.close(); $("#status").textContent=`TRACKING · ${next.delegate}`; }catch(e){ $("#status").textContent="TRACKING ERROR"; } }
 const pts=l=>(l||[]).map(p=>({x:p.x,y:p.y,z:p.z}));
 function write(f,start,points,n){ for(let i=0;i<n;i++){ const p=points[i]; if(!p) continue; f[(start+i)*3]=p.x; f[(start+i)*3+1]=p.y; f[(start+i)*3+2]=p.z; } }
 function track(t){
@@ -329,6 +337,38 @@ function speak(text,done){ if(!$("#tts").checked||!("speechSynthesis" in window)
   const s=new SpeechSynthesisUtterance(text); s.lang="ko-KR"; const v=speechSynthesis.getVoices().find(v=>/ko/i.test(v.lang)); if(v) s.voice=v;
   let f=false; const end=()=>{ if(!f){ f=true; done(); } }; s.onend=end; s.onerror=end; setTimeout(end,8000); speechSynthesis.cancel(); speechSynthesis.speak(s); }
 
+/* ====================== 11-1. 광각(어안) 효과 — WebGL ======================
+   일반 카메라 영상을 180° 어안처럼 보이게: 화면 반지름 r → 원본 반지름 tan(r·A)/tan(A)
+   (가운데는 크게, 가장자리는 눌려 보이는 배럴 왜곡). 랜드마크도 같은 식의 역함수로 옮긴다. */
+const FISH_A=1.18;
+const fish=document.createElement("canvas"); let gl=null,glTex=null,glRes=null;
+function initGL(){ gl=fish.getContext("webgl",{premultipliedAlpha:false,preserveDrawingBuffer:true}); if(!gl) return false;
+  const vs=`attribute vec2 p;varying vec2 uv;void main(){uv=p*.5+.5;gl_Position=vec4(p,0.,1.);}`;
+  const fs=`precision mediump float;uniform sampler2D t;uniform vec2 res;uniform float A;varying vec2 uv;
+    void main(){vec2 d=(uv-.5)*res;float R=.5*length(res);float r=length(d)/R;vec2 q=d;
+      if(r>1e-4){q=d*(tan(r*A)/tan(A))/r;} vec2 s=q/res+.5;
+      if(s.x<0.||s.x>1.||s.y<0.||s.y>1.){gl_FragColor=vec4(0.,0.,0.,1.);}else{gl_FragColor=texture2D(t,s);}
+      float edge=smoothstep(.86,1.02,r);gl_FragColor.rgb*=1.-edge*.85;}`;
+  const sh=(type,src)=>{ const o=gl.createShader(type); gl.shaderSource(o,src); gl.compileShader(o); return o; };
+  const pr=gl.createProgram(); gl.attachShader(pr,sh(gl.VERTEX_SHADER,vs)); gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,fs)); gl.linkProgram(pr);
+  if(!gl.getProgramParameter(pr,gl.LINK_STATUS)) return false; gl.useProgram(pr);
+  const b=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,b); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+  const loc=gl.getAttribLocation(pr,"p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  glTex=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,glTex);
+  for(const [k,v] of [[gl.TEXTURE_MIN_FILTER,gl.LINEAR],[gl.TEXTURE_MAG_FILTER,gl.LINEAR],[gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE],[gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE]]) gl.texParameteri(gl.TEXTURE_2D,k,v);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,true);
+  glRes=gl.getUniformLocation(pr,"res"); gl.uniform1f(gl.getUniformLocation(pr,"A"),FISH_A); return true; }
+let glOK=null;
+function fishImage(srcCanvas){ if(glOK===null) glOK=initGL(); if(!glOK) return srcCanvas;
+  const W=srcCanvas.width,H=srcCanvas.height; if(fish.width!==W||fish.height!==H){ fish.width=W; fish.height=H; }
+  gl.viewport(0,0,W,H); gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,srcCanvas); gl.uniform2f(glRes,W,H); gl.drawArrays(gl.TRIANGLE_STRIP,0,4); return fish; }
+/* 원본 정규좌표(0~1) → 어안 화면 정규좌표 */
+function fishPoint(x,y,W,H){ const dx=(x-.5)*W,dy=(y-.5)*H,R=.5*Math.hypot(W,H),rs=Math.hypot(dx,dy)/R; if(rs<1e-6) return [x,y];
+  const r=Math.atan(rs*Math.tan(FISH_A))/FISH_A, k=r/rs; return [.5+dx*k/W,.5+dy*k/H]; }
+const viewParam=new URLSearchParams(location.search).get("view"); if(viewParam==="normal"||viewParam==="wide") document.querySelector("#view").value=viewParam;
+function applyView(){ const w=$("#view").value==="wide"; $("#camTag").textContent=w?"LIVE · CLIP CAMERA 180°":"LIVE · CAMERA"; }
+$("#view").onchange=applyView; applyView();
+
 /* ====================== 12. 화면 ====================== */
 function rr(x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
 const F_=(w,s)=>`${w} ${s}px Pretendard Variable,Pretendard,system-ui,sans-serif`;
@@ -352,17 +392,19 @@ function loop(now){
       if(ev?.type==="start"){ signing=true; $("#gState").textContent="READING SIGNS"; }
       if(ev?.type==="end"){ signing=false; classify(ev.segment).catch(e=>console.warn(e)); }
       if(ev?.type==="discard") signing=false;
-    }catch(e){ console.warn(e); } busy=false; }
+      detectErrors=0;
+    }catch(e){ console.warn(e); if(++detectErrors===15){ swapHolistic(); } } busy=false; }
 
   // 영상: 흑백 + 잔상 + 그레인 (화면은 거울처럼 좌우 반전)
   const mir=$("#mirror").checked, sc=Math.max(CW/W,CH/H),dw=W*sc,dh=H*sc,ox=(CW-dw)/2,oy=(CH-dh)/2;
-  tctx.save(); tctx.filter="grayscale(1) contrast(1.25) brightness(1.02)"; tctx.globalAlpha=$("#trail").checked?.38:1;
-  if(mir){ tctx.translate(CW,0); tctx.scale(-1,1); } tctx.drawImage(work,ox,oy,dw,dh); tctx.restore();
+  const wide=$("#view").value==="wide", shown=wide?fishImage(work):work;
+  tctx.save(); tctx.filter=$("#color").checked?"contrast(1.05)":"grayscale(1) contrast(1.25) brightness(1.02)"; tctx.globalAlpha=$("#trail").checked?.38:1;
+  if(mir){ tctx.translate(CW,0); tctx.scale(-1,1); } tctx.drawImage(shown,ox,oy,dw,dh); tctx.restore();
   ctx.drawImage(trail,0,0);
   ctx.globalAlpha=.09; ctx.globalCompositeOperation="overlay"; const gx=-Math.random()*256,gy=-Math.random()*256; for(let x=gx;x<CW;x+=256) for(let y=gy;y<CH;y+=256) ctx.drawImage(grain,x,y);
   ctx.globalCompositeOperation="source-over"; ctx.globalAlpha=1;
   const vg=ctx.createRadialGradient(CW/2,CH/2,CH*.35,CW/2,CH/2,CH*.85); vg.addColorStop(0,"rgba(0,0,0,0)"); vg.addColorStop(1,"rgba(0,0,0,.55)"); ctx.fillStyle=vg; ctx.fillRect(0,0,CW,CH);
-  const P=i=>{ const x=frame[i*3],y=frame[i*3+1]; return [ox+(mir?1-x:x)*dw, oy+y*dh]; };
+  const P=i=>{ let x=frame[i*3],y=frame[i*3+1]; if(wide) [x,y]=fishPoint(x,y,W,H); return [ox+(mir?1-x:x)*dw, oy+y*dh]; };
   const has=i=>Number.isFinite(frame[i*3]);
 
   // 180° 눈금
